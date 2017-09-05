@@ -1,0 +1,9 @@
+{
+    "project_name": "ProjectName",
+    "project_name_upper": "{{ cookiecutter.project_name.upper()|replace('-', '') }}",
+    "repository_url": "git@github.com:account/repo.git",
+    "environment": "staging",
+    "server": "myserver.com",
+    "user": "username",
+    "targetdir": "/home/{{ cookiecutter.user }}/envs"
+}
