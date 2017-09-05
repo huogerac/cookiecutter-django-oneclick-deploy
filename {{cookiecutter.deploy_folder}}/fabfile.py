@@ -76,7 +76,7 @@ def _prepare_log_folder(targetdir, virtualenv_folder):
         run(run_cmd)
 
 
-def _update_server_files(projectdir):
+def _update_server_descriptor(projectdir):
     print(green("**** Updating NGINX and GUNICORN"))
     newentry_filename = '{0}_{1}'.format(PROJECT_NAME, env.environment)
     with cd(projectdir):
@@ -84,9 +84,37 @@ def _update_server_files(projectdir):
         run('cp deploy/config/gunicorn.{0} {1}/gunicorn-{2}.conf'.format(env.environment, GUNICORN_TARGET_FOLDER, newentry_filename))
 
     with cd(NGINX_TARGET_FOLDER + '/sites-enabled/'):
-        run('rm -f {0}'.format(newentry_filename)
+        run('rm -f {0}'.format(newentry_filename))
         run('ln -s {0}'.format(
-            NGINX_TARGET_FOLDER + '/sites-enabled/' + newentry_filename)
+            NGINX_TARGET_FOLDER + '/sites-available/' + newentry_filename))
+
+
+def _update_code(projectdir):
+    print(green("**** Updating repository"))
+    with cd(projectdir):
+        run("git pull")
+
+def _migrate_database(projectdir):
+    print(green("**** Migrating Database"))
+    with cd(projectdir):
+        with prefix('source ../bin/activate'):
+            run('./manage.py migrate')
+
+def _update_assets(projectdir):
+    print(green("**** Updating Assets (static files)"))
+    with cd(projectdir):
+        with prefix('source ../bin/activate'):
+            run('./manage.py collectstatic --noinput --settings=%s.settings.%s' % (PROJECT_NAME, env.environment))
+
+def _reload_servers():
+    print(green("**** Reloading servers (NGINX, GUNICORN"))
+    GUNICORN_SERVICE = "gunicorn-{0}_{1}".format(PROJECT_NAME, env.environment)
+    NGINX_SERVICE = "nginx"
+    try:
+        sudo("reload %s" % GUNICORN_SERVICE)
+    except:
+        sudo("start %s" % GUNICORN_SERVICE)
+    sudo("service %s reload" % NGINX_SERVICE)
 
 
 def bootstrap():
@@ -101,54 +129,23 @@ def bootstrap():
     _install_project_dependencies(projectdir)
     _prepare_database(projectdir)
     if not env.dev_mode:
-        _update_server_files(projectdir)
+        _update_server_descriptor(projectdir)
         _prepare_log_folder(env.targetdir, virtualenv_folder)
 
     print(green("bootstrap DONE"))
-
-
-
-
-def _update_code(projectdir):
-    print(green("**** Updating repository"))
-    with cd(projectdir):
-        run("git pull")
-
-def _migrate_database(projectdir):
-    print(green("**** Migrating Database"))
-    with cd(projectdir):
-        with prefix('source ../../bin/activate'):
-            run('./manage.py migrate --settings=%s.settings.%s' % (PROJECT_NAME, env.environment))
-
-def _update_assets(projectdir):
-    print(green("**** Updating Assets (static files)"))
-    with cd(projectdir):
-        with prefix('source ../../bin/activate'):
-            run('./manage.py collectstatic --noinput --settings=%s.settings.%s' % (PROJECT_NAME, env.environment))
-
-def _reload_servers():
-    print(green("**** Reloading servers (NGINX, GUNICORN"))
-    GUNICORN_SERVICE = "gunicorn-%s_%s" % (PROJECT_NAME, env.environment)
-    NGINX_SERVICE = "nginx"
-    try:
-        sudo("reload %s" % GUNICORN_SERVICE)
-    except:
-        sudo("start %s" % GUNICORN_SERVICE)
-    sudo("service %s reload" % NGINX_SERVICE)
-
 
 def deploy():
     print(green("Deploying :: %s (%s)" % (env.environment, env.server_url)))
 
     virtualenv_folder = "%s_%s" % (PROJECT_NAME, env.environment)
     repodir = join(env.targetdir, virtualenv_folder, REPO_FOLDER_NAME)
-    projectdir = join(repodir, PROJECT_NAME)
+    projectdir = repodir  # join(repodir, PROJECT_NAME)
 
     _update_code(projectdir)
     _install_project_dependencies(projectdir)
     _migrate_database(projectdir)
     if not env.dev_mode:
-        _update_assets(projectdir)
+        # _update_assets(projectdir)
         _reload_servers()
 
     print(green("Deploy DONE"))
