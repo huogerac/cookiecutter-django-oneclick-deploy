@@ -12,7 +12,7 @@ env {{cookiecutter.project_name_upper}}_DB_USER='{{cookiecutter.project_name}}'
 env {{cookiecutter.project_name_upper}}_DB_PASSWORD='ch4ng3th1s!'
 env {{cookiecutter.project_name_upper}}_DB_HOST='localhost'
 
-chdir {{cookiecutter.project_base_folder}}
+chdir {{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/{{cookiecutter.project_name}}
 exec ../../bin/gunicorn {{cookiecutter.project_name}}.wsgi:application \
   --name "{{cookiecutter.project_name}}_{{cookiecutter.environment}}" \
   --workers 1 \
