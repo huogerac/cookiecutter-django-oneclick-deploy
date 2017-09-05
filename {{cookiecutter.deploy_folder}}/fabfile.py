@@ -31,7 +31,7 @@ def {{cookiecutter.environment}}():
     env.environment = '{{cookiecutter.environment}}'
     env.dev_mode = False
     env.targetdir = '{{cookiecutter.targetdir}}'
-    env.server_url = '{{cookiecutter.server}}'
+    env.server_url = '{{cookiecutter.server_url}}'
     env.user = '{{cookiecutter.user}}'
     env.password = __get_env_pass__(env.environment)
     env.hosts = env.server_url.split()

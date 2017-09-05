@@ -3,7 +3,7 @@
     "project_name_upper": "{{ cookiecutter.project_name.upper()|replace('-', '') }}",
     "repository_url": "git@github.com:account/repo.git",
     "environment": "staging",
-    "server": "myserver.com",
+    "server_url": "myserver.com",
     "user": "username",
     "targetdir": "/home/{{ cookiecutter.user }}/envs",
     "deploy_folder": "deploy"
