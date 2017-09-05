@@ -1,0 +1,26 @@
+upstream {{cookiecutter.project_name}}_server {
+    server unix:/tmp/{{cookiecutter.project_name}}_{{cookiecutter.environment}}.socket;
+}
+
+server {
+    listen 80;
+    server_name {{cookiecutter.server_url}};
+    access_log /var/log/nginx/{{cookiecutter.project_name}}.access.log;
+    client_max_body_size 12M;
+
+    location /static {
+        alias {{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/{{cookiecutter.project_name}}/assets;
+    }
+
+    location /media {
+        alias {{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/{{cookiecutter.project_name}}/media;
+        expires 10m;
+        autoindex off;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_pass http://{{cookiecutter.project_name}}_server;
+    }
+
+}

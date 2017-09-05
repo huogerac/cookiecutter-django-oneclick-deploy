@@ -10,9 +10,9 @@ from sys import path
 BASE_DIR = dirname(__file__)  #Project or Repo Base Dir
 VIRTUALENV_DIR = dirname(dirname(__file__))
 
-REPO_FOLDER_NAME = '{{ project_name }}'
-PROJECT_NAME = '{{ project_name }}'
-PROJECT_REPO = '{{ repository_url }}'
+REPO_FOLDER_NAME = '{{cookiecutter.project_name}}'
+PROJECT_NAME = '{{cookiecutter.project_name}}'
+PROJECT_REPO = '{{cookiecutter.repository_url}}'
 
 NGINX_TARGET_FOLDER = '/etc/nginx'
 GUNICORN_TARGET_FOLDER = '/etc/init'
@@ -26,13 +26,13 @@ def __get_env_pass__(environment):
         abort('You must set up the password using the SO variable: %s' % pass_env_var_name)
     return pass_env_var
 
-def {{ environment }}():
-    "Setup {{ environment }} server"
-    env.environment = '{{ environment }}'
+def {{cookiecutter.environment}}():
+    "Setup {{cookiecutter.environment}} server"
+    env.environment = '{{cookiecutter.environment}}'
     env.dev_mode = False
-    env.targetdir = '{{ targetdir }}'
-    env.server_url = '{{ server }}'
-    env.user = '{{ user }}'
+    env.targetdir = '{{cookiecutter.targetdir}}'
+    env.server_url = '{{cookiecutter.server}}'
+    env.user = '{{cookiecutter.user}}'
     env.password = __get_env_pass__(env.environment)
     env.hosts = env.server_url.split()
 
