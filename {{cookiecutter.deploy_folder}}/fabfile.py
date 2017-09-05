@@ -37,7 +37,6 @@ def {{cookiecutter.environment}}():
     env.hosts = env.server_url.split()
 
 
-
 def _create_virtualenv(targetdir, virtualenv_folder):
     print(green("\n\n**** Creating virtualenv"))
     with cd(targetdir):
@@ -72,7 +71,22 @@ def _prepare_database(projectdir):
 def _prepare_log_folder(targetdir, virtualenv_folder):
     print(green("**** Preparing Log folder"))
     with cd(targetdir):
-        run('mkdir -p %s/logs' % virtualenv_folder)
+        run_cmd = 'mkdir -p {0}/logs'.format(virtualenv_folder)
+        print(green("$ {0}\n".format(run_cmd) ))
+        run(run_cmd)
+
+
+def _update_server_files(projectdir):
+    print(green("**** Updating NGINX and GUNICORN"))
+    newentry_filename = '{0}_{1}'.format(PROJECT_NAME, env.environment)
+    with cd(projectdir):
+        run('cp deploy/config/nginx.{0} {1}/sites-available/{2}'.format(env.environment, NGINX_TARGET_FOLDER, newentry_filename))
+        run('cp deploy/config/gunicorn.{0} {1}/gunicorn-{2}.conf'.format(env.environment, GUNICORN_TARGET_FOLDER, newentry_filename))
+
+    with cd(NGINX_TARGET_FOLDER + '/sites-enabled/'):
+        run('rm -f {0}'.format(newentry_filename)
+        run('ln -s {0}'.format(
+            NGINX_TARGET_FOLDER + '/sites-enabled/' + newentry_filename)
 
 
 def bootstrap():
@@ -86,11 +100,9 @@ def bootstrap():
     _clone_repository(env.targetdir, virtualenv_folder)
     _install_project_dependencies(projectdir)
     _prepare_database(projectdir)
-    #if not env.dev_mode:
-    #    _generate_nginx_entry(projectdir)
-    #    _generate_gunicorn_entry(projectdir)
-    #    _enable_nginx(projectdir)
-    #    _prepare_log_folder(env.targetdir, virtualenv_folder)
+    if not env.dev_mode:
+        _update_server_files(projectdir)
+        _prepare_log_folder(env.targetdir, virtualenv_folder)
 
     print(green("bootstrap DONE"))
 
