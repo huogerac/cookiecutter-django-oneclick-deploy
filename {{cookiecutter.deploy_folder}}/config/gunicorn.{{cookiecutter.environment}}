@@ -19,4 +19,4 @@ exec ../../bin/gunicorn {{cookiecutter.project_name}}.wsgi:application \
   --timeout 200 \
   --bind unix:/tmp/{{cookiecutter.project_name}}_{{cookiecutter.environment}}.socket \
   --log-level=warning \
-  --log-file={{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/logs/{{cookiecutter.project_name}}_{{cookiecutter.environment}}-gunicorn.log 2>>{{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/logs/{{cookiecutter.project_name}}_{{ environment}}-gunicorn.log
+  --log-file={{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/logs/{{cookiecutter.project_name}}_{{cookiecutter.environment}}-gunicorn.log 2>>{{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/logs/{{cookiecutter.project_name}}_{{cookiecutter.environment}}-gunicorn.log
