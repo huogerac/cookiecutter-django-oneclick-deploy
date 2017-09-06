@@ -5,7 +5,7 @@ stop on shutdown
 
 respawn
 setuid {{cookiecutter.user}}
-env DJANGO_SETTINGS_MODULE={{cookiecutter.project_name}}.settings
+env DJANGO_SETTINGS_MODULE=config.settings.{{cookiecutter.environment}}
 
 env {{cookiecutter.project_name_upper}}_DB_NAME='{{cookiecutter.project_name}}'
 env {{cookiecutter.project_name_upper}}_DB_USER='{{cookiecutter.project_name}}'
@@ -13,7 +13,7 @@ env {{cookiecutter.project_name_upper}}_DB_PASSWORD='ch4ng3th1s!'
 env {{cookiecutter.project_name_upper}}_DB_HOST='localhost'
 
 chdir {{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/{{cookiecutter.project_name}}
-exec ../bin/gunicorn {{cookiecutter.project_name}}.wsgi:application \
+exec ../bin/gunicorn config.wsgi:application \
   --name "{{cookiecutter.project_name}}_{{cookiecutter.environment}}" \
   --workers 1 \
   --timeout 200 \

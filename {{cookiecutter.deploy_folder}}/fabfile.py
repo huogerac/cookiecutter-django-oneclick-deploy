@@ -80,8 +80,8 @@ def _update_server_descriptor(projectdir):
     print(green("**** Updating NGINX and GUNICORN"))
     newentry_filename = '{0}_{1}'.format(PROJECT_NAME, env.environment)
     with cd(projectdir):
-        run('cp deploy/config/nginx.{0} {1}/sites-available/{2}'.format(env.environment, NGINX_TARGET_FOLDER, newentry_filename))
-        run('cp deploy/config/gunicorn.{0} {1}/gunicorn-{2}.conf'.format(env.environment, GUNICORN_TARGET_FOLDER, newentry_filename))
+        run('cp bootstrap/config/nginx.{0} {1}/sites-available/{2}'.format(env.environment, NGINX_TARGET_FOLDER, newentry_filename))
+        run('cp bootstrap/config/gunicorn.{0} {1}/gunicorn-{2}.conf'.format(env.environment, GUNICORN_TARGET_FOLDER, newentry_filename))
 
     with cd(NGINX_TARGET_FOLDER + '/sites-enabled/'):
         run('rm -f {0}'.format(newentry_filename))
@@ -104,7 +104,7 @@ def _update_assets(projectdir):
     print(green("**** Updating Assets (static files)"))
     with cd(projectdir):
         with prefix('source ../bin/activate'):
-            run('./manage.py collectstatic --noinput --settings=%s.settings.%s' % (PROJECT_NAME, env.environment))
+            run('./manage.py collectstatic --noinput --settings=config.settings.%s' % (env.environment))
 
 def _reload_servers():
     print(green("**** Reloading servers (NGINX, GUNICORN"))
@@ -145,7 +145,7 @@ def deploy():
     _install_project_dependencies(projectdir)
     _migrate_database(projectdir)
     if not env.dev_mode:
-        # _update_assets(projectdir)
+        _update_assets(projectdir)
         _reload_servers()
 
     print(green("Deploy DONE"))

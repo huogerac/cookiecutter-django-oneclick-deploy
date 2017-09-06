@@ -9,7 +9,7 @@ server {
     client_max_body_size 12M;
 
     location /static {
-        alias {{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/{{cookiecutter.project_name}}/assets;
+        alias {{cookiecutter.targetdir}}/{{cookiecutter.project_name}}_{{cookiecutter.environment}}/{{cookiecutter.project_name}}/staticfiles;
     }
 
     location /media {

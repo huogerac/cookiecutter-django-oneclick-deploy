@@ -6,5 +6,5 @@
     "server_url": "myserver.com",
     "user": "username",
     "targetdir": "/home/{{ cookiecutter.user }}/envs",
-    "deploy_folder": "deploy"
+    "deploy_folder": "bootstrap"
 }
